@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <string.h>
 #include <fstream>
+#include "FilaEleitor.h";
 
 using namespace std;
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
@@ -11,11 +12,8 @@ struct Candidato{
 	string nome;
 	Candidato *proximo;
 };
-struct Eleitor{
-	int titulo;
-	string nome;
-	Eleitor *proximo;
-};
+
+
 
 
 // Função que salva o candidato em um arquivo txt após executar a adição desse candidato à lista de candidatos
@@ -125,7 +123,7 @@ void sobrescreveArquivo(Candidato *&lista){
         cout << "Erro ao sobrescrever o arquivo" << endl;
     }
 }
-void liberarMemoria(Candidato *&lista){
+void liberarMemoriaC(Candidato *&lista){
 	Candidato *candidatoAtual = NULL;
 	if(lista == NULL){
 		cout << "Lista está vazia";
@@ -173,8 +171,9 @@ void removeCandidato(Candidato *&lista) {
         sobrescreveArquivo(lista);
     }
 
-    liberarMemoria(lista);
+    liberarMemoriaC(lista);
 }
+
 int menuEleitores(){
 	cout << "Menu de eleitores"<<endl;
 	cout << "--------------------" << endl;
@@ -196,6 +195,24 @@ void salvarEleitorEmArquivo(Eleitor *eleitor){
         cout << "Não foi possível abrir o arquivo Candidatos.txt" << endl;
     }
 }
+void inserirEleitor(Eleitor*& lista, const std::string& nome, int numero){
+	Eleitor* novoEleitor = new Eleitor;
+    novoEleitor->nome = nome;
+    novoEleitor->titulo = numero;
+    novoEleitor->proximo = NULL;
+
+    if (lista == NULL) {
+        lista = novoEleitor;
+        salvarEleitorEmArquivo(novoEleitor);
+    } else {
+        Eleitor* ultimo = lista;
+        while (ultimo->proximo != NULL) {
+            ultimo = ultimo->proximo;
+        }
+        ultimo->proximo = novoEleitor;
+        salvarEleitorEmArquivo(novoEleitor);
+    }
+}
 void cadastraEleitor(Eleitor *lista){
 	string nome;
 	int num;
@@ -205,24 +222,83 @@ void cadastraEleitor(Eleitor *lista){
 	cin >> num;
 	inserirEleitor(lista, nome, num);
 }
-void inserirEleitor((Eleitor*& lista, const std::string& nome, int numero){
-	Eleitor* novoEleitor = new Eleitor;
-    novoEleitor->nome = nome;
-    novoEleitor->titulo = numero;
-    novoEleitor->proximo = NULL;
+void carregarEleitores(Eleitor *&lista) {
+    ifstream arquivo("Eleitores.txt");
+    if (arquivo.is_open()) {
+        string nome;
+        int numero;
+        while (arquivo >> nome >> numero) {
+            Eleitor* novoEleitor = new Eleitor;
+            novoEleitor->nome = nome;
+            novoEleitor->titulo = numero;
+            novoEleitor->proximo = NULL;
 
-    if (lista == NULL) {
-        lista = novoEleitor;
-        salvarCandidatoEmArquivo(novoEleitor);
-    } else {
-        Eleitor* ultimo = lista;
-        while (ultimo->proximo != NULL) {
-            ultimo = ultimo->proximo;
+            if (lista == NULL) {
+                lista = novoEleitor;
+            } else {
+                Eleitor* atual = lista;
+                while (atual->proximo != NULL) {
+                    atual = atual->proximo;
+                }
+                atual->proximo = novoEleitor;
+            }
         }
-        ultimo->proximo = novoEleitor;
-        salvarCandidatoEmArquivo(novoEleitor);
+        arquivo.close();
+        cout << "Eleitores carregados com sucesso!" << endl;
+    } else {
+        cout << "Não foi possível abrir o arquivo." << endl;
+    }
+    
+    
+}
+bool verificaEligibilidade(int titulo,Eleitor *lista){
+	Eleitor *eleitorAtual = lista;
+	bool boolean;
+	if(lista == NULL){
+		cout << "Não há eleitor há ser exibido";
+		return 0;
+	}else{
+		while(eleitorAtual != NULL){
+			if(eleitorAtual->titulo = titulo){
+				boolean =  true;
+				
+			}else{
+				boolean =  false;
+			}
+			eleitorAtual = eleitorAtual->proximo;
+		}
+		return boolean;
+	}
+}
+void liberarMemoriaE(Eleitor *&lista){
+	Eleitor *eleitorAtual = NULL;
+	if(lista == NULL){
+		cout << "Lista está vazia";
+		
+		
+	}else{
+		eleitorAtual = lista;
+		while(eleitorAtual != NULL){
+			Eleitor *prox = eleitorAtual->proximo;
+			delete eleitorAtual;
+			eleitorAtual = prox;
+		}
+		lista = NULL;
+	}
+}
+void listarEleitores(const Eleitor* lista) {
+    if (lista == NULL) {
+        cout << "Nenhum candidato cadastrado." << endl;
+        return;
+    }
+    
+    const Eleitor* eleitorAtual = lista;
+    while (eleitorAtual != NULL) {
+        cout << "Nome: " << eleitorAtual->nome << " Número: " << eleitorAtual->titulo << endl;
+        eleitorAtual = eleitorAtual->proximo;
     }
 }
+
 int menu(){
 	
 	cout << "Menu de opções" << endl;
@@ -250,10 +326,11 @@ int main() {
 			while(subopc !=4){
 				if(subopc == 1){
 					cadastrarCandidato(listacandidatos);
+					liberarMemoriaC(listacandidatos);
 				}else if(subopc == 2){
 					carregarCandidatos(listacandidatos);
 					listarCandidatos(listacandidatos);
-					liberarMemoria(listacandidatos);
+					liberarMemoriaC(listacandidatos);
 					
 				}else if(subopc == 3){
 					removeCandidato(listacandidatos);
@@ -264,6 +341,18 @@ int main() {
 			}
 		}else if(opc == 2){
 			subopc = menuEleitores();
+			while(subopc !=3){
+				if(subopc == 1){
+					
+					cadastraEleitor(listaeleitores);
+					
+				}else if(subopc == 2){
+					carregarEleitores(listaeleitores);
+					listarEleitores(listaeleitores);
+					liberarMemoriaE(listaeleitores);
+				}
+				subopc = menuEleitores();
+			}
 		}else if(opc == 3){
 			
 		}else if(opc == 4){

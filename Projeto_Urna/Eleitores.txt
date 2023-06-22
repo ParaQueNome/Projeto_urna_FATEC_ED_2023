@@ -1,0 +1,8 @@
+Jonas, 12345
+Thiago, 214342
+Amanda, 2147483647
+Amanda, 12353
+Thais, 125463
+Lucas, 9544
+Sua, 0
+Suamae, 12243
