@@ -2,19 +2,15 @@
 #include <cstdlib>
 #include <string.h>
 #include <fstream>
-#include "FilaEleitor.h";
+#include "FilaEleitor.h"
 
 using namespace std;
-/* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
 struct Candidato{
 	int numero;
 	string nome;
 	Candidato *proximo;
 };
-
-
-
 
 // Função que salva o candidato em um arquivo txt após executar a adição desse candidato à lista de candidatos
 void salvarCandidatoEmArquivo(const Candidato* candidato) {
@@ -27,6 +23,7 @@ void salvarCandidatoEmArquivo(const Candidato* candidato) {
         cout << "Não foi possível abrir o arquivo Candidatos.txt" << endl;
     }
 }
+
 
 int menuCandidatos(){
 	cout << "Menu de candidatos"<<endl;
@@ -251,24 +248,22 @@ void carregarEleitores(Eleitor *&lista) {
     
     
 }
-bool verificaEligibilidade(int titulo,Eleitor *lista){
+bool verificaElegibilidade(int titulo,Eleitor *lista){
 	Eleitor *eleitorAtual = lista;
 	bool boolean;
 	if(lista == NULL){
 		cout << "Não há eleitor há ser exibido";
-		return 0;
+		return false;
 	}else{
 		while(eleitorAtual != NULL){
-			if(eleitorAtual->titulo = titulo){
+			if(eleitorAtual->titulo == titulo){
 				boolean =  true;
-				
-			}else{
-				boolean =  false;
-			}
+			
 			eleitorAtual = eleitorAtual->proximo;
 		}
 		return boolean;
 	}
+}
 }
 void liberarMemoriaE(Eleitor *&lista){
 	Eleitor *eleitorAtual = NULL;
@@ -299,6 +294,7 @@ void listarEleitores(const Eleitor* lista) {
     }
 }
 
+
 int menu(){
 	
 	cout << "Menu de opções" << endl;
@@ -313,12 +309,49 @@ int menu(){
 	return opc;
 }
 
-
+void insereFila(FilaEleitor*& fila, Eleitor *lista){
+	int titulo;
+	
+	cout << "Entre na fila de votação!" << endl;
+	cout << "Insira o numero de seu título de eleitor: ";
+	cin >> titulo;
+	
+	if(verificaElegibilidade(titulo, lista)){
+		
+		cout << "Título verificado, entrando na fila de votação ..." << endl;
+		Eleitor *eleitorAtual = lista;
+		while(eleitorAtual != NULL){
+			if(eleitorAtual->titulo == titulo){
+				fila->enfileirar(titulo, eleitorAtual->nome);
+				fila->exibirFila();
+			}
+			eleitorAtual = eleitorAtual->proximo;
+		}
+		
+		
+	}else{
+		cout << "Você não está elegível para votar, regularize seu cadastro!" << endl;
+	}
+	
+}
+int menuVoto(){
+	int opc;
+	cout << "Votação " << endl;
+	cout << "Insira a opção correspondente" << endl;
+	cout << "[1] - Cadastro na fila de votação" << endl;
+	cout << "[2] - Votar" << endl;
+	cout << "[3] - Retornar" << endl;
+	cin >> opc;
+	return opc;
+}
 int main() {
 	setlocale(LC_ALL, "Portuguese");
+	FilaEleitor *fila = new FilaEleitor();
+	
 	int opc = menu();
 	Candidato *listacandidatos = NULL;
 	Eleitor *listaeleitores = NULL;
+	
 	while(opc !=5){
 		int subopc;
 		if(opc == 1){
@@ -354,6 +387,15 @@ int main() {
 				subopc = menuEleitores();
 			}
 		}else if(opc == 3){
+			subopc = menuVoto();
+			while(subopc != 3){
+				if(subopc == 1 ){
+					
+					carregarEleitores(listaeleitores);
+					insereFila(fila, listaeleitores);
+				}
+				subopc = menuVoto();
+			}
 			
 		}else if(opc == 4){
 			
@@ -362,8 +404,7 @@ int main() {
 		}
 		opc = menu();
 	}
-	
-	
+	delete fila;
 }
 
 

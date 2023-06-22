@@ -5,7 +5,7 @@
 using namespace std;
 struct Eleitor {
     int titulo;
-    std::string nome;
+    string nome;
     Eleitor* proximo;
 };
 class FilaEleitor {
@@ -70,4 +70,12 @@ public:
             atual = atual->proximo;
         }
     }
+    ~FilaEleitor() {
+    Eleitor* atual = primeiro;
+    while (atual != NULL) {
+        Eleitor* proximo = atual->proximo;
+        delete atual;
+        atual = proximo;
+    }
+}
 };
