@@ -175,7 +175,43 @@ void removeCandidato(Candidato *&lista) {
 
     liberarMemoria(lista);
 }
+void salvarEleitorEmArquivo(Eleitor *eleitor){
+	ofstream arquivo("Eleitores.txt", ios::app);
+    if (arquivo.is_open()) {
+        arquivo << eleitor->nome << ", " << eleitor->numero << endl;
+        arquivo.close();
+        cout << "Candidato salvo com sucesso no arquivo Candidatos.txt" << endl;
+    } else {
+        cout << "Não foi possível abrir o arquivo Candidatos.txt" << endl;
+    }
+}
+void cadastraEleitor(Eleitor *lista){
+	string nome;
+	int num;
+	cout << "Insira o nome do Eleitor: ";
+	cin >> nome;
+	cout << "Insira o numero do titulo de eleitor: ";
+	cin >> num;
+	inserirEleitor(lista, nome, num);
+}
+void inserirEleitor((Eleitor*& lista, const std::string& nome, int numero){
+	Eleitor* novoEleitor = new Eleitor;
+    novoEleitor->nome = nome;
+    novoEleitor->numero = numero;
+    novoEleitor->proximo = NULL;
 
+    if (lista == NULL) {
+        lista = novoEleitor;
+        salvarCandidatoEmArquivo(novoEleitor);
+    } else {
+        Eleitor* ultimo = lista;
+        while (ultimo->proximo != NULL) {
+            ultimo = ultimo->proximo;
+        }
+        ultimo->proximo = novoEleitor;
+        salvarCandidatoEmArquivo(novoEleitor);
+    }
+}
 int menu(){
 	
 	cout << "Menu de opções" << endl;
@@ -195,6 +231,7 @@ int main() {
 	setlocale(LC_ALL, "Portuguese");
 	int opc = menu();
 	Candidato *listacandidatos = NULL;
+	Eleitor *listaeleitores = NULL;
 	while(opc !=5){
 		int subopc;
 		if(opc == 1){
