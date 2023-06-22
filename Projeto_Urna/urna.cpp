@@ -175,10 +175,21 @@ void removeCandidato(Candidato *&lista) {
 
     liberarMemoria(lista);
 }
+int menuEleitores(){
+	cout << "Menu de eleitores"<<endl;
+	cout << "--------------------" << endl;
+	cout << "Escolha uma opção" << endl;
+	cout << "[1] - Inserir novo eleitor" << endl;
+	cout << "[2] - Listar eleitores cadastrados" << endl;
+	cout << "[3] - Voltar" << endl;
+	int subopc;
+	cin >> subopc;
+	return subopc;
+}
 void salvarEleitorEmArquivo(Eleitor *eleitor){
 	ofstream arquivo("Eleitores.txt", ios::app);
     if (arquivo.is_open()) {
-        arquivo << eleitor->nome << ", " << eleitor->numero << endl;
+        arquivo << eleitor->nome << ", " << eleitor->titulo << endl;
         arquivo.close();
         cout << "Candidato salvo com sucesso no arquivo Candidatos.txt" << endl;
     } else {
@@ -197,7 +208,7 @@ void cadastraEleitor(Eleitor *lista){
 void inserirEleitor((Eleitor*& lista, const std::string& nome, int numero){
 	Eleitor* novoEleitor = new Eleitor;
     novoEleitor->nome = nome;
-    novoEleitor->numero = numero;
+    novoEleitor->titulo = numero;
     novoEleitor->proximo = NULL;
 
     if (lista == NULL) {
@@ -252,7 +263,7 @@ int main() {
 				subopc = menuCandidatos();
 			}
 		}else if(opc == 2){
-			
+			subopc = menuEleitores();
 		}else if(opc == 3){
 			
 		}else if(opc == 4){
