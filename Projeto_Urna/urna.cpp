@@ -12,6 +12,12 @@ struct Candidato{
 	Candidato *proximo;
 };
 
+struct Voto{
+	int titulo;
+	string nome;
+	Voto *proximo;
+};
+
 // Função que salva o candidato em um arquivo txt após executar a adição desse candidato à lista de candidatos
 void salvarCandidatoEmArquivo(const Candidato* candidato) {
     ofstream arquivo("Candidatos.txt", ios::app);
@@ -248,22 +254,23 @@ void carregarEleitores(Eleitor *&lista) {
     
     
 }
-bool verificaElegibilidade(int titulo,Eleitor *lista){
-	Eleitor *eleitorAtual = lista;
-	bool boolean;
-	if(lista == NULL){
-		cout << "Não há eleitor há ser exibido";
-		return false;
-	}else{
-		while(eleitorAtual != NULL){
-			if(eleitorAtual->titulo == titulo){
-				boolean =  true;
-			
-			eleitorAtual = eleitorAtual->proximo;
-		}
-		return boolean;
-	}
-}
+bool verificaElegibilidade(int titulo, Eleitor* lista) {
+    Eleitor* eleitorAtual = lista;
+    bool boolean = false;
+    
+    if (lista == NULL) {
+        cout << "Não há eleitor a ser exibido" << endl;
+        return false;
+    } else {
+        while (eleitorAtual != NULL) {
+            if (eleitorAtual->titulo == titulo) {
+                boolean = true;
+                break;
+            }
+            eleitorAtual = eleitorAtual->proximo;
+        }
+        return boolean;
+    }
 }
 void liberarMemoriaE(Eleitor *&lista){
 	Eleitor *eleitorAtual = NULL;
@@ -302,7 +309,7 @@ int menu(){
 	cout << "[1] - Menu Candidatos" << endl;
 	cout << "[2] - Menu Eleitores" << endl;
 	cout << "[3] - Menu Votos" << endl;
-	cout << "[4] - Menu relatórios"<<endl;
+	cout << "[4] - Gerar Relatório"<<endl;
 	cout << "[5] - Encerrar" << endl;
 	int opc;
 	cin >> opc;
@@ -334,6 +341,53 @@ void insereFila(FilaEleitor*& fila, Eleitor *lista){
 	}
 	
 }
+string pesquisaNomeCandidato(int num, Candidato *lista){
+	Candidato *atual = lista;
+	while(atual != NULL){
+		if(num == atual->numero){
+			string nome = atual->nome;
+			return nome;
+		}
+	}
+}
+void inserirVoto(Voto*& lista, const std::string& nome, int numero){
+	Voto* novoVoto = new Voto;
+    novoVoto->nome = nome;
+    novoVoto->titulo = numero;
+    novoVoto->proximo = NULL;
+
+    if (lista == NULL) {
+        lista = novoVoto;
+        
+    } else {
+        Voto* ultimo = lista;
+        while (ultimo->proximo != NULL) {
+            ultimo = ultimo->proximo;
+        }
+        ultimo->proximo = novoVoto;
+        
+    }
+}
+void votar(FilaEleitor *fila, Voto *votos, Candidato *candidatos){
+	int num;
+	if(fila->estaVazia()){
+		cout << "Não há eleitores na fila de eleição!" << endl;
+		
+	}else{
+		int titulo = fila->votar();
+		Candidato *atual = candidatos;
+		listarCandidatos(candidatos);
+		
+		cout << "Insira o número do candidato que deseja votar: ";
+		cin >> num;
+		string nome = pesquisaNomeCandidato(num, candidatos);
+		inserirVoto(votos,nome,num );
+		
+		cout << "Voto realizado com sucesso! Agradecemos à sua presença!" << endl;
+		fila->desenfileirar();
+	}
+}
+
 int menuVoto(){
 	int opc;
 	cout << "Votação " << endl;
@@ -351,6 +405,7 @@ int main() {
 	int opc = menu();
 	Candidato *listacandidatos = NULL;
 	Eleitor *listaeleitores = NULL;
+	Voto *listavotos = NULL;
 	
 	while(opc !=5){
 		int subopc;
@@ -378,7 +433,7 @@ int main() {
 				if(subopc == 1){
 					
 					cadastraEleitor(listaeleitores);
-					
+					liberarMemoriaE(listaeleitores);
 				}else if(subopc == 2){
 					carregarEleitores(listaeleitores);
 					listarEleitores(listaeleitores);
@@ -393,6 +448,11 @@ int main() {
 					
 					carregarEleitores(listaeleitores);
 					insereFila(fila, listaeleitores);
+					liberarMemoriaE(listaeleitores);
+				}else if(subopc == 2){
+					carregarCandidatos(listacandidatos);
+					votar(fila, listavotos, listacandidatos);
+					liberarMemoriaC(listacandidatos);
 				}
 				subopc = menuVoto();
 			}

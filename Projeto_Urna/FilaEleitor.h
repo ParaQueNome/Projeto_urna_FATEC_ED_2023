@@ -70,6 +70,21 @@ public:
             atual = atual->proximo;
         }
     }
+    
+	int votar() {
+    if (estaVazia()) {
+        cout << "A fila está vazia" << endl;
+        return -1; // Ou qualquer outro valor indicando uma situação de erro
+    }
+    
+    Eleitor* atual = primeiro;
+    while (atual != NULL) {
+        return atual->titulo;
+        atual = atual->proximo;
+    }
+
+    return -1; // Se a execução chegar aqui, significa que não foi possível encontrar o título de eleitor
+}
     ~FilaEleitor() {
     Eleitor* atual = primeiro;
     while (atual != NULL) {
