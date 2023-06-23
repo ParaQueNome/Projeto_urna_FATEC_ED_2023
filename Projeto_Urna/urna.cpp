@@ -301,6 +301,18 @@ void listarEleitores(const Eleitor* lista) {
     }
 }
 
+void relatorioQtdVotosCandidato(Voto *votos){
+	Voto *votoAtual = votos;
+	int qtd
+	if(votos == NULL){
+		cout << "As eleições ainda não foram realizadas !!" << endl;
+		
+	}else{
+		while(votos != NULL){
+			
+		}
+	}
+}
 
 int menu(){
 	
@@ -398,6 +410,7 @@ int menuVoto(){
 	cin >> opc;
 	return opc;
 }
+
 int main() {
 	setlocale(LC_ALL, "Portuguese");
 	FilaEleitor *fila = new FilaEleitor();
