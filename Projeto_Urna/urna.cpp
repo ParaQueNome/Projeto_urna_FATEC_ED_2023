@@ -352,6 +352,31 @@ string pesquisaNomeCandidato(int num, Candidato *lista){
 	}
 	return "";
 }
+
+void votar(FilaEleitor*& fila,Voto*& votos,Candidato*& candidatos){
+	int num;
+	if(fila->estaVazia()){
+		cout << "Não há eleitores na fila de eleição!" << endl;
+		
+	}else{
+		int titulo = fila->votar();
+		Candidato *atual = candidatos;
+		listarCandidatos(candidatos);
+		
+		cout << "Insira o número do candidato que deseja votar: ";
+		cin >> num;
+		string nome = pesquisaNomeCandidato(num, candidatos);
+		if(nome != ""){
+                
+		inserirVoto(votos,nome,num );
+		cout << "Voto realizado com sucesso! Agradecemos à sua presença!" << endl;
+        }else{
+              cout << "Erro" << endl;
+              } 
+		
+		fila->desenfileirar();
+	}
+}
 void inserirVoto(Voto*& lista, const std::string& nome, int numero){
 	Voto* novoVoto = new Voto;
     novoVoto->nome = nome;
@@ -370,25 +395,6 @@ void inserirVoto(Voto*& lista, const std::string& nome, int numero){
         
     }
 }
-void votar(FilaEleitor *fila, Voto *votos, Candidato *candidatos){
-	int num;
-	if(fila->estaVazia()){
-		cout << "Não há eleitores na fila de eleição!" << endl;
-		
-	}else{
-		int titulo = fila->votar();
-		Candidato *atual = candidatos;
-		listarCandidatos(candidatos);
-		
-		cout << "Insira o número do candidato que deseja votar: ";
-		cin >> num;
-		string nome = pesquisaNomeCandidato(num, candidatos);
-		inserirVoto(votos,nome,num );
-		
-		cout << "Voto realizado com sucesso! Agradecemos à sua presença!" << endl;
-		fila->desenfileirar();
-	}
-}
 
 int menuVoto(){
 	int opc;
@@ -400,28 +406,31 @@ int menuVoto(){
 	cin >> opc;
 	return opc;
 }
-void relatorioQtdVotosCandidato(Voto *votos, Candidato *lista){
-	Voto *votoAtual = votos;
-	Candidato *candidatoAtual = lista;
-	int qtd =0;
-	if(votos == NULL){
-		cout << "As eleições ainda não foram realizadas !!" << endl;
-		
-	}else{
-		while(candidatoAtual != NULL){
-			while(votoAtual != NULL){
-				int qtd = 0;
-				if(candidatoAtual->nome == votoAtual->nome){
-					qtd ++;
-					
-				}
-				votoAtual = votoAtual->proximo;
-			}
-			cout << "A quantidade de votos do candidato: " << candidatoAtual->nome << "é: " << qtd << "votos" << endl;
-			votoAtual = votos;
-			candidatoAtual = candidatoAtual->proximo;
-		}
-	}
+void relatorioQtdVotosCandidato(Voto*& votos, Candidato*& lista) {
+    Candidato* candidatoAtual = lista;
+    Voto* votoAtual = votos;
+    while(votoAtual != NULL){
+                    cout << votoAtual->titulo << endl;
+                    }
+    if (votos == NULL) {
+        cout << "As eleições ainda não foram realizadas!" << endl;
+    } else {
+        while (candidatoAtual != NULL) {
+            int qtd = 0;
+            Voto* votoAtual = votos;
+            
+            while (votoAtual != NULL) {
+                if (candidatoAtual->nome == votoAtual->nome) {
+                    qtd++;
+                }
+                votoAtual = votoAtual->proximo;
+            }
+            
+            cout << "A quantidade de votos do candidato " << candidatoAtual->nome << " é: " << qtd << " votos" << endl;
+            
+            candidatoAtual = candidatoAtual->proximo;
+        }
+    }
 }
 
 

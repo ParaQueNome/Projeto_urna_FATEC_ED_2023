@@ -1,2 +1,2 @@
-Jonas,,, 30
-Joao, 13
+Jonas, 13
+Pedro, 45
