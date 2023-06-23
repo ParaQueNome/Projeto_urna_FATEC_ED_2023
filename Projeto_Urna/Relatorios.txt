@@ -1,0 +1,6 @@
+Relatório de Votos por candidatos: 
+Nome: Jonas,, Quantidade de votos: 1
+Relatório de Votos por candidatos: 
+Nome: Pedro,, Quantidade de votos: 0
+Relatório da quantidade de votos: 
+Quantidade de votos: 0

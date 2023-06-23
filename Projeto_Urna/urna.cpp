@@ -352,6 +352,24 @@ string pesquisaNomeCandidato(int num, Candidato *lista){
 	}
 	return "";
 }
+void inserirVoto(Voto*& lista, const std::string& nome, int numero){
+	Voto* novoVoto = new Voto;
+    novoVoto->nome = nome;
+    novoVoto->titulo = numero;
+    novoVoto->proximo = NULL;
+
+    if (lista == NULL) {
+        lista = novoVoto;
+        
+    } else {
+        Voto* ultimo = lista;
+        while (ultimo->proximo != NULL) {
+            ultimo = ultimo->proximo;
+        }
+        ultimo->proximo = novoVoto;
+        
+    }
+}
 
 void votar(FilaEleitor*& fila,Voto*& votos,Candidato*& candidatos){
 	int num;
@@ -377,24 +395,7 @@ void votar(FilaEleitor*& fila,Voto*& votos,Candidato*& candidatos){
 		fila->desenfileirar();
 	}
 }
-void inserirVoto(Voto*& lista, const std::string& nome, int numero){
-	Voto* novoVoto = new Voto;
-    novoVoto->nome = nome;
-    novoVoto->titulo = numero;
-    novoVoto->proximo = NULL;
 
-    if (lista == NULL) {
-        lista = novoVoto;
-        
-    } else {
-        Voto* ultimo = lista;
-        while (ultimo->proximo != NULL) {
-            ultimo = ultimo->proximo;
-        }
-        ultimo->proximo = novoVoto;
-        
-    }
-}
 
 int menuVoto(){
 	int opc;
@@ -406,33 +407,90 @@ int menuVoto(){
 	cin >> opc;
 	return opc;
 }
+void salvarRelatorioCEmArquivo(string nome, int qtd){
+	ofstream arquivo("Relatorios.txt", ios::app);
+    if (arquivo.is_open()) {
+    	arquivo << "Relatório de Votos por candidatos: " << endl;
+        arquivo << "Nome: " << nome << ", " <<"Quantidade de votos: "<< qtd << endl;
+        arquivo.close();
+        cout << "Candidato salvo com sucesso no arquivo Relatorios.txt" << endl;
+    } else {
+        cout << "Não foi possível abrir o arquivo Relatorios.txt" << endl;
+    }
+}
+void salvarRelatorioQtdVotos(int qtd){
+	ofstream arquivo("Relatorios.txt", ios::app);
+    if (arquivo.is_open()) {
+    	arquivo << "Relatório da quantidade de votos: " << endl;
+        arquivo <<"Quantidade de votos: "<< qtd << endl;
+        arquivo.close();
+        cout << "Voto salvo com sucesso no arquivo Relatorios.txt" << endl;
+    } else {
+        cout << "Não foi possível abrir o arquivo Relatorios.txt" << endl;
+    }
+}
 void relatorioQtdVotosCandidato(Voto*& votos, Candidato*& lista) {
     Candidato* candidatoAtual = lista;
     Voto* votoAtual = votos;
-    while(votoAtual != NULL){
-                    cout << votoAtual->titulo << endl;
-                    }
+
     if (votos == NULL) {
         cout << "As eleições ainda não foram realizadas!" << endl;
     } else {
+        while (votoAtual != NULL) {
+            cout << votoAtual->titulo << endl;
+            votoAtual = votoAtual->proximo;
+        }
+
         while (candidatoAtual != NULL) {
             int qtd = 0;
-            Voto* votoAtual = votos;
-            
+            votoAtual = votos;
+
             while (votoAtual != NULL) {
                 if (candidatoAtual->nome == votoAtual->nome) {
                     qtd++;
                 }
                 votoAtual = votoAtual->proximo;
             }
-            
+
+            salvarRelatorioCEmArquivo(candidatoAtual->nome, qtd);
             cout << "A quantidade de votos do candidato " << candidatoAtual->nome << " é: " << qtd << " votos" << endl;
-            
+
             candidatoAtual = candidatoAtual->proximo;
         }
+        
     }
 }
+void relatorioQtdVotos(Voto*& votos) {
+    
+    Voto* votoAtual = votos;
 
+    if (votos == NULL) {
+        cout << "As eleições ainda não foram realizadas!" << endl;
+    } else {
+        while (votoAtual != NULL) {
+            cout << votoAtual->titulo << endl;
+            votoAtual = votoAtual->proximo;
+        }
+
+        
+		int qtd = 0;
+        while (votoAtual != NULL) {
+            
+            qtd++;
+            
+            votoAtual = votoAtual->proximo;
+            
+
+            
+
+            
+            //salvarRelatorioCEmArquivo(candidatoAtual->nome, qtd);
+        }
+        cout << "A quantidade de votos é de: " << qtd << "votos" << endl;
+        salvarRelatorioQtdVotos(qtd);
+    }
+    
+}
 
 int main() {
 	setlocale(LC_ALL, "Portuguese");
@@ -496,6 +554,7 @@ int main() {
 		}else if(opc == 4){
 			carregarCandidatos(listacandidatos);
 			relatorioQtdVotosCandidato(listavotos,listacandidatos);
+			relatorioQtdVotos(listavotos);
 			liberarMemoriaC(listacandidatos);
 		}else{
 			cout << "Opção inválida"<<endl;
