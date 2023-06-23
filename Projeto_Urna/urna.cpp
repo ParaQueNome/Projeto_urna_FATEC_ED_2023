@@ -301,18 +301,6 @@ void listarEleitores(const Eleitor* lista) {
     }
 }
 
-void relatorioQtdVotosCandidato(Voto *votos){
-	Voto *votoAtual = votos;
-	int qtd
-	if(votos == NULL){
-		cout << "As eleições ainda não foram realizadas !!" << endl;
-		
-	}else{
-		while(votos != NULL){
-			
-		}
-	}
-}
 
 int menu(){
 	
@@ -360,7 +348,9 @@ string pesquisaNomeCandidato(int num, Candidato *lista){
 			string nome = atual->nome;
 			return nome;
 		}
+		atual = atual->proximo;
 	}
+	return "";
 }
 void inserirVoto(Voto*& lista, const std::string& nome, int numero){
 	Voto* novoVoto = new Voto;
@@ -410,6 +400,30 @@ int menuVoto(){
 	cin >> opc;
 	return opc;
 }
+void relatorioQtdVotosCandidato(Voto *votos, Candidato *lista){
+	Voto *votoAtual = votos;
+	Candidato *candidatoAtual = lista;
+	int qtd =0;
+	if(votos == NULL){
+		cout << "As eleições ainda não foram realizadas !!" << endl;
+		
+	}else{
+		while(candidatoAtual != NULL){
+			while(votoAtual != NULL){
+				int qtd = 0;
+				if(candidatoAtual->nome == votoAtual->nome){
+					qtd ++;
+					
+				}
+				votoAtual = votoAtual->proximo;
+			}
+			cout << "A quantidade de votos do candidato: " << candidatoAtual->nome << "é: " << qtd << "votos" << endl;
+			votoAtual = votos;
+			candidatoAtual = candidatoAtual->proximo;
+		}
+	}
+}
+
 
 int main() {
 	setlocale(LC_ALL, "Portuguese");
@@ -471,7 +485,9 @@ int main() {
 			}
 			
 		}else if(opc == 4){
-			
+			carregarCandidatos(listacandidatos);
+			relatorioQtdVotosCandidato(listavotos,listacandidatos);
+			liberarMemoriaC(listacandidatos);
 		}else{
 			cout << "Opção inválida"<<endl;
 		}
